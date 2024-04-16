@@ -75,6 +75,6 @@ if uploaded_file is not None:
     # Inpaint the image
     reconstructed_img, masked_img = reconstruct_image(input_img)
 
-    # Display the original, masked, and reconstructed images
-    st.image([input_img, Image.fromarray(masked_img), Image.fromarray(reconstructed_img)], caption=[
+    st.image([input_img, Image.fromarray(masked_img.astype('uint8')), Image.fromarray(reconstructed_img)], caption=[
              'Original Image', 'Masked Image', 'Reconstructed Image'], width=200)
+
