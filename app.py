@@ -4,7 +4,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 
 # Load the generator model
-generator_model = load_model('saved_model/generator_model.h5')
+generator_model = load_model('generator_model.h5')
 
 # Compile the model manually
 generator_model.compile(optimizer='adam', loss='mean_squared_error')
