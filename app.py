@@ -2,7 +2,6 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from tensorflow.keras.models import load_model
-import cv2
 
 # Load the generator model
 generator_model = load_model('saved_model/generator_model.h5')
@@ -36,11 +35,10 @@ def mask_center(imgs, img_rows=128, img_cols=128, mask_height=32, mask_width=32,
 
 def reconstruct_image(input_img):
     # Resize to match model input size
-    input_img_resized = cv2.resize(input_img, (128, 128))
+    input_img_resized = input_img.resize((128, 128))
 
     # Preprocess the image
-    input_img_normalized = input_img_resized / \
-        255.0  # Normalize pixel values to [0, 1]
+    input_img_normalized = np.array(input_img_resized) / 255.0  # Normalize pixel values to [0, 1]
 
     # Generate masked image and missing parts
     masked_img, missing_parts = mask_center(
@@ -54,12 +52,11 @@ def reconstruct_image(input_img):
         predicted_missing_parts * 255.0, 0, 255).astype(np.uint8)
 
     # Resize the predicted missing parts to match the size of the original image
-    predicted_missing_parts_resized = cv2.resize(
-        predicted_missing_parts, (128, 128))
+    predicted_missing_parts_resized = Image.fromarray(predicted_missing_parts).resize((128, 128))
 
     # Combine the predicted missing parts with the original image
     reconstructed_img = np.where(
-        masked_img[0] == 0, predicted_missing_parts_resized, input_img_resized)
+        masked_img[0] == 0, np.array(predicted_missing_parts_resized), np.array(input_img_resized))
 
     # Return both the reconstructed image and the masked image
     return reconstructed_img, masked_img[0]
@@ -73,11 +70,11 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
     # Read the uploaded image
-    input_img = np.array(Image.open(uploaded_file))
+    input_img = Image.open(uploaded_file)
 
     # Inpaint the image
     reconstructed_img, masked_img = reconstruct_image(input_img)
 
     # Display the original, masked, and reconstructed images
-    st.image([input_img, masked_img, reconstructed_img], caption=[
+    st.image([input_img, Image.fromarray(masked_img), Image.fromarray(reconstructed_img)], caption=[
              'Original Image', 'Masked Image', 'Reconstructed Image'], width=200)
