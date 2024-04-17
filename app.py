@@ -77,7 +77,7 @@ def calculate_psnr(original_img, reconstructed_img):
     return psnr
 
 # Streamlit app
-st.title("Image Inpainting App")
+st.title("Image Restoration")
 
 uploaded_file = st.file_uploader(
     "Upload an image", type=["jpg", "jpeg", "png"])
