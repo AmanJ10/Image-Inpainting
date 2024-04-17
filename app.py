@@ -9,20 +9,6 @@ generator_model = load_model('generator_model.h5')
 # Compile the model manually
 generator_model.compile(optimizer='adam', loss='mean_squared_error')
 
-# Custom CSS to set the background color
-custom_css = """
-<style>
-body {
-    background-color: #070e0e; /* Fallback color */
-    background-image: linear-gradient(180deg, #070e0e, #040708);
-}
-</style>
-"""
-
-# Inject custom CSS into Streamlit app
-st.markdown(custom_css, unsafe_allow_html=True)
-
-
 def mask_center(imgs, img_rows=128, img_cols=128, mask_height=32, mask_width=32, channels=3):
     center_y = img_rows // 2
     center_x = img_cols // 2
