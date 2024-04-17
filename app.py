@@ -2,7 +2,6 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from tensorflow.keras.models import load_model
-import io
 
 # Load the generator model
 generator_model = load_model('generator_model.h5')
@@ -91,28 +90,7 @@ if uploaded_file is not None:
     # Inpaint the image
     reconstructed_img, masked_img, psnr = reconstruct_image(input_img)
 
-    st.image([input_img, Image.fromarray(reconstructed_img)], caption=[
-             'Original Image', 'Reconstructed Image'], width=200)
+    st.image([input_img, Image.fromarray(masked_img.astype('uint8')), Image.fromarray(reconstructed_img)], caption=[
+             'Original Image', 'Masked Image', 'Reconstructed Image'], width=200)
     
     st.write(f"PSNR: {psnr:.2f}")
-
-    # Download buttons for various formats
-    download_formats = ["JPG", "PNG", "PDF"]
-
-    for format in download_formats:
-        # Convert PIL image to bytes
-        img_bytes = io.BytesIO()
-        if format == "JPG":
-            reconstructed_img.save(img_bytes, format='JPEG')
-        elif format == "PNG":
-            reconstructed_img.save(img_bytes, format='PNG')
-        elif format == "PDF":
-            reconstructed_img.save(img_bytes, format='PDF')
-        img_bytes.seek(0)
-        # Download button
-        st.download_button(
-            label=f"Download as {format}",
-            data=img_bytes,
-            file_name=f"reconstructed_image.{format.lower()}",
-            mime=f"image/{format.lower()}"
-        )
