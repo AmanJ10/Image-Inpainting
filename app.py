@@ -9,15 +9,18 @@ generator_model = load_model('generator_model.h5')
 # Compile the model manually
 generator_model.compile(optimizer='adam', loss='mean_squared_error')
 
-# Set background color
-st.set_page_config(
-    page_title="Image Inpainting App",
-    page_icon="🖼️",
-    layout="wide",  # Wide layout to display larger images
-    initial_sidebar_state="expanded",  # Expanded sidebar by default
-    # Set background color to a mixture of #070e0e and #040708
-    bg_color="linear-gradient(180deg, #070e0e, #040708)",
-)
+# Custom CSS to set the background color
+custom_css = """
+<style>
+body {
+    background-color: #070e0e; /* Fallback color */
+    background-image: linear-gradient(180deg, #070e0e, #040708);
+}
+</style>
+"""
+
+# Inject custom CSS into Streamlit app
+st.markdown(custom_css, unsafe_allow_html=True)
 
 
 def mask_center(imgs, img_rows=128, img_cols=128, mask_height=32, mask_width=32, channels=3):
