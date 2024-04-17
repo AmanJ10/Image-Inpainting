@@ -58,9 +58,24 @@ def reconstruct_image(input_img):
     reconstructed_img = np.where(
         masked_img[0] == 0, np.array(predicted_missing_parts_resized), np.array(input_img_resized))
 
-    # Return both the reconstructed image and the masked image
-    return reconstructed_img, masked_img[0]
+    # Calculate PSNR
+    psnr = calculate_psnr(np.array(input_img_resized), reconstructed_img)
 
+    # Return both the reconstructed image, the masked image, and PSNR
+    return reconstructed_img, masked_img[0], psnr
+
+
+def calculate_psnr(original_img, reconstructed_img):
+    # Convert images to float32
+    original_img = original_img.astype(np.float32)
+    reconstructed_img = reconstructed_img.astype(np.float32)
+    # Calculate MSE
+    mse = np.mean((original_img - reconstructed_img) ** 2)
+    # Calculate maximum pixel value
+    max_pixel = np.amax(original_img)
+    # Calculate PSNR
+    psnr = 20 * np.log10(max_pixel) - 10 * np.log10(mse)
+    return psnr
 
 # Streamlit app
 st.title("Image Inpainting App")
@@ -73,8 +88,9 @@ if uploaded_file is not None:
     input_img = Image.open(uploaded_file)
 
     # Inpaint the image
-    reconstructed_img, masked_img = reconstruct_image(input_img)
+    reconstructed_img, masked_img, psnr = reconstruct_image(input_img)
 
-    st.image([input_img, Image.fromarray(masked_img.astype('uint8')), Image.fromarray(reconstructed_img)], caption=[
-             'Original Image', 'Masked Image', 'Reconstructed Image'], width=200)
-
+    st.image([input_img, Image.fromarray(reconstructed_img)], caption=[
+             'Original Image', 'Reconstructed Image'], width=200)
+    
+    st.write(f"PSNR: {psnr:.2f}")
