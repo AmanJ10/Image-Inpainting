@@ -90,7 +90,7 @@ if uploaded_file is not None:
     # Inpaint the image
     reconstructed_img, masked_img, psnr = reconstruct_image(input_img)
 
-    st.image([input_img, Image.fromarray(masked_img.astype('uint8')), Image.fromarray(reconstructed_img)], caption=[
-             'Original Image', 'Masked Image', 'Reconstructed Image'], width=200)
+    st.image([input_img, Image.fromarray(reconstructed_img)], caption=[
+             'Original Image','Reconstructed Image'], width=200)
     
     st.write(f"PSNR: {psnr:.2f}")
